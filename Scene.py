@@ -1,21 +1,29 @@
+import numpy as np
 from manim import *
 
-class SquareToCircle(Scene):
+class FunctionExample(Scene):
     def construct(self):
-        circle = Circle()  # create a circle
-        circle.set_fill(PINK, opacity=0.5)  # set color and transparency
+        axes = Axes(
+            x_range=[-5, 5, .5],
+            y_range=[-3, 4, 1],
+            x_axis_config={"numbers_to_include": [-4, -3, 3, 4]},
+            y_axis_config={"numbers_to_include": [-2, 2, 3]},
+            tips=True
+        )
+        axes_labels=axes.get_axis_labels()
+        # Get the graph of a simple functions
+        graph = axes.get_graph(lambda x: np.sin(1/x), color=RED)
+        # Set up its label
+        graph_label = axes.get_graph_label(
+            graph, x_val=1, direction=2 * UP + RIGHT,
+           label=r'f(x) = \sin(\frac{1}{x})', color=DARK_BLUE
+        )
 
-        square = Square()  # create a square
-        square.rotate(PI / 4)  # rotate a certain amount
-
-        self.play(Create(square))  # animate the creation of the square
-        self.play(Transform(square, circle))  # interpolate the square into the circle
-        self.play(FadeOut(square))  # fade out animation
-
-class RotatingSquare(Scene):
-    def construct(self):
-        square = Square()
-        square.rotate(2*PI)
-
-        self.play(Create(square))
-        self.play(Transform(square, square))
+        # Graph the axes components together
+        axes_group = VGroup(axes, axes_labels)
+        
+        # Animate
+        self.play(Create(axes_group), run_time=2)
+        self.wait(0.25)
+        self.play(Create(graph), run_time=3)
+        self.play(Write(graph_label), run_time=2)
